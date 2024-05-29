@@ -5,4 +5,5 @@ dash
 jupyter-dash
 numpy
 statsmodels
-opencv
+opencv-python
+opencv-contrib-python
