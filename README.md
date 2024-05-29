@@ -84,9 +84,3 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 
 ![BI4CV](/BI4CV/BI4CV.png "BI4CV")
-
-I've recently started working on a new computer vision initiative, BI4CV (Business Intelligence for Computer Vision). This tool is designed as a hobby project to develop a BI dashboard that improves how we use image and video data for insightful business intelligence.
-
-In the future, I'd like to expand BI4CV into a generative BI toolset that enhances data storytelling through advanced visualizations, dynamic dashboards, and comprehensive reports. It's designed to intelligently select the most effective visual types from complex datasets, making advanced analytics accessible to everyone.
-
-#BusinessIntelligence #ComputerVision #DataVisualization #MachineLearning #Innovation #TechNews #BI4CV
