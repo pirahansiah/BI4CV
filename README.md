@@ -1,4 +1,3 @@
-![GitHub Logo](BI4CV/BI4CV.png)
 # Generative AI Business Intelligence Computer Vision (BI4CV)
 
 Welcome to the BI4CV repository! This project is dedicated to revolutionizing the way businesses approach image and video dataset analysis. Our innovative Business Intelligence (BI) tools are designed to enhance storytelling and provide actionable insights for your media content.

@@ -1,3 +1,6 @@
+# Done
+- python -m unittest discover tests
+
 # To-Do List for Creating GitHub Repo for Business Intelligence Tools for Media Files (Images/Videos) - Micro SaaS
 
 ## Repository Setup

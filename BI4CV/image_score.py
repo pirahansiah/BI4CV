@@ -1,4 +1,5 @@
 import cv2
+import os
 import numpy as np
 from scipy.special import gamma
             # BRISQUE (Blind/Referenceless Image Spatial Quality Evaluator)
@@ -73,7 +74,13 @@ def calculate_fqadi_features(image):
 
 # Test
 if __name__ == '__main__':
-    image = cv2.imread('/Users/farshid/code/Work/IMG_2506.JPG')
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config_file_path = os.path.join(script_dir, 'BI4CV.png')
+    image = cv2.imread(config_file_path)
+    if image is None:
+        print('file not found')
+        exit()
+    #image = np.random.randint(0, 256, (256, 256, 3), dtype=np.uint8)
     print(' \n \n \n calculate_mscn_coefficients')
     print(calculate_mscn_coefficients(image))
     print(' \n \n \n compute_niqe_features')
