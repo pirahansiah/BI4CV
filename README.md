@@ -4,6 +4,40 @@ Welcome to the BI4CV repository! This project is dedicated to revolutionizing th
 
 Through advanced visualizations, interactive dashboards, and detailed reports, our system intelligently selects the optimal visual representations based on the diversity and complexity of your dataset. This approach simplifies the analytics process, making it accessible to users regardless of their technical expertise.
 
+## Use Cases 
+
+### Move to AWS: Estimate Cost to Move Data into S3
+- Analyze the total size of your media files (images/videos)
+- Estimate the cost of transferring and storing the data in Amazon S3 based on AWS pricing
+- Visualize the estimated costs over time, considering factors like data growth and retention policies
+
+### Video Understanding on AWS: Estimate Cost of Running Docker Containers
+- Determine the number of videos and their total size
+- Estimate the processing time required based on video duration and complexity
+- Calculate the cost of running Docker containers on Amazon Elastic Container Service (ECS) or Amazon Elastic Kubernetes Service (EKS) to process the videos
+- Visualize the estimated costs based on different instance types and configurations
+
+### Local Processing: Labeling, Querying Images/Videos
+- Develop local tools or applications for manual or semi-automated labeling of media files
+- Implement search and query capabilities to find specific images/videos based on labels, metadata, or content
+- Track progress and productivity metrics for labeling and querying tasks
+
+### Find Images/Videos Matching Specific Criteria
+- Implement content-based image/video retrieval techniques to search for media files matching specific criteria (e.g., objects, scenes, activities)
+- Visualize search results with thumbnails and relevant metadata
+- Enable filtering and sorting options for efficient browsing and retrieval
+
+### Anomaly Detection (e.g., Fire, Timing of Events)
+- Develop anomaly detection models to identify unusual or potentially dangerous events in images/videos (e.g., fire, security incidents)
+- Visualize detected anomalies on a timeline or heatmap, highlighting their location and severity
+- Set up alerts and notifications for critical anomalies requiring immediate attention
+
+### Comparison Data: Impact on Space, Processing Time, and Cost Estimation
+- Compare the storage requirements, processing times, and costs associated with different media file formats and resolutions
+- Visualize the trade-offs between file size, quality, and processing requirements
+- Estimate the overall costs and resource requirements for various media processing scenarios
+
+- 
 
 ## Project Aim
 

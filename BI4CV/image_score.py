@@ -72,32 +72,81 @@ def calculate_fqadi_features(image):
     edge_density = np.sum(edges) / (img.shape[0] * img.shape[1])
     return edge_density
 
-# Test
-if __name__ == '__main__':
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    config_file_path = os.path.join(script_dir, 'BI4CV.png')
-    image = cv2.imread(config_file_path)
+# Test all 
+def test_all_socre(image):   
+    flag_display=False 
     if image is None:
         print('file not found')
         exit()
-    #image = np.random.randint(0, 256, (256, 256, 3), dtype=np.uint8)
-    print(' \n \n \n calculate_mscn_coefficients')
-    print(calculate_mscn_coefficients(image))
-    print(' \n \n \n compute_niqe_features')
-    print(compute_niqe_features(image))
-    print(' \n \n \n calculate_piqe_index')
-    print(calculate_piqe_index(image))
-    print(' \n \n \n estimate_jpeg_quality')
-    print(estimate_jpeg_quality(image))
-    print(' \n \n \n compute_bliinds_features')
-    print(compute_bliinds_features(image))
-    print(' \n \n \n extract_cornia_features')
-    print(extract_cornia_features(image))
-    print(' \n \n \n calculate_sseq')
-    print(calculate_sseq(image))
-    print(' \n \n \n calculate_fqadi_features')
-    print(calculate_fqadi_features(image))
+    #img_dir = os.path.dirname(os.path.abspath(__file__))
+    # #image = np.random.randint(0, 256, (256, 256, 3), dtype=np.uint8)
+    # print(' \n \n \n calculate_mscn_coefficients')
+    # print(calculate_mscn_coefficients(image))
+    # print(' \n \n \n compute_niqe_features')
+    # print(compute_niqe_features(image))
+    # print(' \n \n \n calculate_piqe_index')
+    # print(calculate_piqe_index(image))
+    # print(' \n \n \n estimate_jpeg_quality')
+    # print(estimate_jpeg_quality(image))
+    # print(' \n \n \n compute_bliinds_features')
+    # print(compute_bliinds_features(image))
+    # print(' \n \n \n extract_cornia_features')
+    # print(extract_cornia_features(image))
+    # print(' \n \n \n calculate_sseq')
+    # print(calculate_sseq(image))
+    # print(' \n \n \n calculate_fqadi_features')
+    # print(calculate_fqadi_features(image))
+    
+    # one number for each
+    if flag_display:
+        print(' \n \n \n calculate_mscn_coefficients')
+        print(np.mean(calculate_mscn_coefficients(image)))
+        print(' \n \n \n compute_niqe_features')
+        print(np.mean(compute_niqe_features(image)))
+        print(' \n \n \n calculate_piqe_index')
+        print(np.mean(calculate_piqe_index(image)))
+        print(' \n \n \n estimate_jpeg_quality')
+        print(np.mean(estimate_jpeg_quality(image)))
+        print(' \n \n \n compute_bliinds_features')
+        print(np.mean(compute_bliinds_features(image)))
+        print(' \n \n \n extract_cornia_features')
+        print(np.mean(extract_cornia_features(image)))
+        print(' \n \n \n calculate_sseq')
+        print(np.mean(calculate_sseq(image)))
+        print(' \n \n \n calculate_fqadi_features')
+        print(np.mean(calculate_fqadi_features(image)))
+
+    one_score = [np.mean(calculate_mscn_coefficients(image))
+        ,np.mean(compute_niqe_features(image))
+        ,np.mean(calculate_piqe_index(image))
+        ,np.mean(estimate_jpeg_quality(image))
+        ,np.mean(compute_bliinds_features(image))
+        ,np.mean(extract_cornia_features(image))
+        ,np.mean(calculate_sseq(image))
+        ,np.mean(calculate_fqadi_features(image))]
+    #print(' \n \n \n One Score for image quality')
+    #print(np.mean(one_score))
+    return np.mean(one_score)
 
 
+
+if __name__ == '__main__':        
+    folder_path_txt = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(folder_path_txt,'folder_path.txt'), 'r') as file:
+        folder_path = file.read().strip()
+    folder_path = os.path.join(folder_path, 'datasets')    
+    files = os.listdir(folder_path)
+    #image_files = [file for file in files if file.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff'))]    
+    for file_name in files:
+        file_path = os.path.join(folder_path, file_name)
+        try:
+            image = cv2.imread(file_path)
+            if image is not None:
+                print(file_path)
+                print(test_all_socre(image))
+            else:
+                print(f"Unable to read image: {file_name}")
+        except Exception as e:
+            print(f"Error reading file {file_name}: {e}")    
 
 
