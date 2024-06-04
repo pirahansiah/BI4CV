@@ -4,6 +4,14 @@ Welcome to the BI4CV repository! This project is dedicated to revolutionizing th
 
 Through advanced visualizations, interactive dashboards, and detailed reports, our system intelligently selects the optimal visual representations based on the diversity and complexity of your dataset. This approach simplifies the analytics process, making it accessible to users regardless of their technical expertise.
 
+## What's New
+I have updated the codebase to enhance the microservices architecture, allowing each service to run independently or all together. This approach facilitates better testing and flexibility. You can now run all services simply by executing the app.py file. The documentation has been expanded with more information about the tools, plans, and a to-do list. Each file is numbered for better sequence understanding.
+
+- 1_main_service.py: Main Service Dashboard (Port 5000) - Enhanced with a new styled button for listing BI services, making it more visually appealing and user-friendly.
+- 2_bi_tools.py: Business Intelligence Tools for Media Files (Port 5001) - Updated the HTML and CSS to improve the interface, added descriptions to buttons for better functionality, and made the layout more interactive and informative. It includes a list of buttons that navigate to respective services.
+- 3_image_video_metadata_dashboard.py: Image/Video Metadata Dashboard (Port 5003) - Enhanced the dashboard with better visualizations using Plotly, improved layout and styling for better readability, and added interactive tabs for detailed insights into file metadata.
+These updates streamline the development process and improve the user experience across all services.
+
 ## Use Cases 
 
 ### Move to AWS: Estimate Cost to Move Data into S3
@@ -36,8 +44,6 @@ Through advanced visualizations, interactive dashboards, and detailed reports, o
 - Compare the storage requirements, processing times, and costs associated with different media file formats and resolutions
 - Visualize the trade-offs between file size, quality, and processing requirements
 - Estimate the overall costs and resource requirements for various media processing scenarios
-
-- 
 
 ## Project Aim
 

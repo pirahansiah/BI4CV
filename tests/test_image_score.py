@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 
 # Import the functions to be tested from the image_score module
-from BI4CV.image_score import (calculate_mscn_coefficients, compute_niqe_features, calculate_piqe_index, 
+from BI4CV.microservices.image_score import (calculate_mscn_coefficients, compute_niqe_features, calculate_piqe_index, 
                                estimate_jpeg_quality, compute_bliinds_features, extract_cornia_features, 
                                calculate_sseq, calculate_fqadi_features)
 

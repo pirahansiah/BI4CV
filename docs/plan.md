@@ -76,3 +76,28 @@
 - Storytelling Context: Provide context and narrative to explain what the visuals represent and their implications.
 - Responsive Design: Ensure optimal viewing and interaction on various devices and screen sizes.
 - Regular Updates: Regularly review and update the dashboard design based on user feedback and evolving business requirements.
+
+
+
+# Enhance Dataset of Images/Videos
+    Shadow and Overexposure Removal / Lighting Correction 
+        Histogram Equalization
+            Use techniques like CLAHE (Contrast Limited Adaptive Histogram Equalization) to enhance the lighting in images.
+        Deep Learning Models
+            Implement models like Retinex-based methods for illumination correction. Models like EnlightenGAN can be used for low-light image enhancement.
+        Conditional GANs
+            Use Conditional Generative Adversarial Networks (cGANs) for shadow removal and lighting correction. These models can be trained to generate well-lit images from poorly lit ones.
+        Lighting Transfer
+            Use deep learning methods to transfer lighting conditions from a well-lit reference image to the input image. Techniques like neural style transfer can be adapted for this purpose.
+    Detecting Issues with Lighting
+        Image Quality Assessment
+            Implement algorithms to assess image quality focusing on lighting issues. This can be done using metrics like entropy, brightness, contrast, and sharpness.
+        Deep Learning
+            Train a CNN (Convolutional Neural Network) to classify images based on lighting quality. The network can be trained to detect shadows, overexposure, and underexposure.
+        Pre-trained Models
+            Use pre-trained models like VGG or ResNet and fine-tune them for detecting lighting issues in passport photos.
+    Keeping Biometric Integrity
+        Face Landmark Detection
+            Use models like Dlib or OpenCV’s facial landmark detection to ensure that key biometric features are preserved after processing.
+        GANs with Biometric Constraints
+            Train GANs with a focus on maintaining facial features' integrity. Loss functions can be designed to penalize deviations from the original biometric features.
