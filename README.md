@@ -1,88 +1,118 @@
 # Generative AI Business Intelligence Computer Vision (BI4CV)
 
-Welcome to the BI4CV repository! This project is dedicated to revolutionizing the way businesses approach image and video dataset analysis. Our innovative Business Intelligence (BI) tools are designed to enhance storytelling and provide actionable insights for your media content.
+![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![OpenCV](https://img.shields.io/badge/OpenCV-4.9+-5C3EE8?style=flat&logo=opencv&logoColor=white)
+![Plotly](https://img.shields.io/badge/Plotly-5.18+-3F4F75?style=flat&logo=plotly&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker&logoColor=white)
 
-Through advanced visualizations, interactive dashboards, and detailed reports, our system intelligently selects the optimal visual representations based on the diversity and complexity of your dataset. This approach simplifies the analytics process, making it accessible to users regardless of their technical expertise.
+Welcome to the BI4CV repository — a comprehensive Business Intelligence platform for image and video dataset analysis using generative AI, local LLMs, and advanced ML-powered dashboards.
 
-## What's New
-I have updated the codebase to enhance the microservices architecture, allowing each service to run independently or all together. This approach facilitates better testing and flexibility. You can now run all services simply by executing the app.py file. The documentation has been expanded with more information about the tools, plans, and a to-do list. Each file is numbered for better sequence understanding.
+## Overview
 
-- 1_main_service.py: Main Service Dashboard (Port 5000) - Enhanced with a new styled button for listing BI services, making it more visually appealing and user-friendly.
-- 2_bi_tools.py: Business Intelligence Tools for Media Files (Port 5001) - Updated the HTML and CSS to improve the interface, added descriptions to buttons for better functionality, and made the layout more interactive and informative. It includes a list of buttons that navigate to respective services.
-- 3_image_video_metadata_dashboard.py: Image/Video Metadata Dashboard (Port 5003) - Enhanced the dashboard with better visualizations using Plotly, improved layout and styling for better readability, and added interactive tabs for detailed insights into file metadata.
-These updates streamline the development process and improve the user experience across all services.
+BI4CV intelligently selects optimal visual representations based on dataset diversity and complexity, providing actionable insights through interactive dashboards, automated anomaly detection, and LLM-powered data storytelling.
 
-## Use Cases 
+## What's New (2025-2026)
+
+- **Ollama Integration**: Local LLM inference via Ollama for privacy-first data storytelling (Llama 3.2, Phi-3, Mistral)
+- **RAG-Enhanced Analytics**: Retrieval-Augmented Generation for contextual dataset insights
+- **ONNX Runtime**: Model inference accelerated with ONNX Runtime 1.18+ for edge and CPU deployment
+- **Multimodal LLM Support**: Vision-language models (GPT-4V, LLaVA, Florence-2) for automated image/video captioning and analysis
+- **Semantic Search**: CLIP-based zero-shot image retrieval and content-based search
+- **Async Microservices**: FastAPI-based async endpoints replacing Flask for higher throughput
+- **Cloud-Native CI/CD**: GitHub Actions with automated Docker builds and multi-arch support
+- **Quantized Models**: INT8/INT4 quantization via bitsandbytes and GGUF for local deployment
+
+## Microservices Architecture
+
+| Service | Port | Description |
+|---------|------|-------------|
+| `1_main_service.py` | 5000 | Main Service Dashboard — service discovery and routing |
+| `2_bi_tools.py` | 5001 | BI Tools — dataset profiling, cost estimation, insights |
+| `3_image_video_metadata_dashboard.py` | 5003 | Metadata Dashboard — Plotly visualizations, interactive tabs |
+
+## Use Cases
 
 ### Move to AWS: Estimate Cost to Move Data into S3
-- Analyze the total size of your media files (images/videos)
-- Estimate the cost of transferring and storing the data in Amazon S3 based on AWS pricing
-- Visualize the estimated costs over time, considering factors like data growth and retention policies
+- Analyze total size of media files (images/videos)
+- Estimate cost of transferring and storing data in Amazon S3
+- Visualize estimated costs over time with data growth projections
 
-### Video Understanding on AWS: Estimate Cost of Running Docker Containers
-- Determine the number of videos and their total size
-- Estimate the processing time required based on video duration and complexity
-- Calculate the cost of running Docker containers on Amazon Elastic Container Service (ECS) or Amazon Elastic Kubernetes Service (EKS) to process the videos
-- Visualize the estimated costs based on different instance types and configurations
+### Video Understanding on AWS: Estimate Docker Container Costs
+- Determine video count and total size
+- Estimate processing time based on duration and complexity
+- Calculate costs for ECS/EKS container processing
+- Visualize costs across instance types and configurations
 
 ### Local Processing: Labeling, Querying Images/Videos
-- Develop local tools or applications for manual or semi-automated labeling of media files
-- Implement search and query capabilities to find specific images/videos based on labels, metadata, or content
-- Track progress and productivity metrics for labeling and querying tasks
+- Semi-automated labeling with SAM-2 (Segment Anything Model 2) integration
+- CLIP-based semantic search for content-based retrieval
+- Track progress and productivity metrics
 
-### Find Images/Videos Matching Specific Criteria
-- Implement content-based image/video retrieval techniques to search for media files matching specific criteria (e.g., objects, scenes, activities)
-- Visualize search results with thumbnails and relevant metadata
-- Enable filtering and sorting options for efficient browsing and retrieval
+### Anomaly Detection
+- YOLOv9/YOLO11-based real-time anomaly detection
+- Temporal anomaly patterns with heatmap visualization
+- Alert system for critical events (fire, security incidents)
 
-### Anomaly Detection (e.g., Fire, Timing of Events)
-- Develop anomaly detection models to identify unusual or potentially dangerous events in images/videos (e.g., fire, security incidents)
-- Visualize detected anomalies on a timeline or heatmap, highlighting their location and severity
-- Set up alerts and notifications for critical anomalies requiring immediate attention
+### Comparison Data: Space, Processing Time, Cost
+- Compare storage requirements across formats and resolutions
+- Visualize trade-offs between file size, quality, and processing needs
 
-### Comparison Data: Impact on Space, Processing Time, and Cost Estimation
-- Compare the storage requirements, processing times, and costs associated with different media file formats and resolutions
-- Visualize the trade-offs between file size, quality, and processing requirements
-- Estimate the overall costs and resource requirements for various media processing scenarios
+## Tech Stack
 
-## Project Aim
-
-Our aim is to develop a comprehensive suite of tools that leverage machine learning and local large language models (LLMs) to provide smart and intuitive BI dashboards for your image and video media content. These dashboards facilitate deeper insights into your datasets without requiring users to have technical experience in machine learning.
-
-## Features
-
-- **Advanced Visualization Tools**: Best-in-class tools for data visualization that make insights accessible and actionable.
-- **Smart Dashboard Creation**: Utilize built-in ML-powered features to effortlessly create and customize BI dashboards.
-- **Anomaly Detection**: Automatically detect and alert on anomalies, outliers, exceptions, and deviations in your data.
-- **Local LLM Integration**: Leverage local LLMs for enhanced data storytelling and smarter BI dashboard creation.
-- **User-Friendly Interface**: No prior technical knowledge of machine learning required to use the system.
+| Category | Tools |
+|----------|-------|
+| **ML/DL** | PyTorch 2.x, Ultralytics YOLO11, ONNX Runtime, SAM-2 |
+| **LLM** | Ollama (Llama 3.2, Phi-3), OpenAI API, LangChain |
+| **Vision** | OpenCV 4.9+, CLIP, Florence-2, LLaVA |
+| **Dashboard** | Plotly 5.x, Dash, Streamlit |
+| **Backend** | FastAPI, Flask, Python 3.10+ |
+| **Infrastructure** | Docker, GitHub Actions, AWS (S3, ECS, EKS) |
+| **Data** | Pandas, NumPy, ChromaDB (vector store) |
 
 ## Getting Started
 
-To get started with BI4CV, please follow the instructions below:
+```bash
+git clone https://github.com/pirahansiah/BI4CV.git
+cd BI4CV
+pip install -r requirements.txt
 
-1. **Clone the Repository**:
+# Start all services
+python app.py
 
-`git clone https://github.com/yourusername/BI4CV.git`
+# Or start individual services
+python 1_main_service.py    # Port 5000
+python 2_bi_tools.py        # Port 5001
+python 3_image_video_metadata_dashboard.py  # Port 5003
+```
 
-2. **Navigate to the Project Directory**:
+### Quick Start with Docker
 
-`cd BI4CV`
+```bash
+docker-compose up --build
+```
 
-3. **Install Required Libraries** (if applicable):
+## Key Features
 
-`pip install -r requirements.txt`
+- **Advanced Visualization**: Plotly/Dash interactive dashboards with drill-down capabilities
+- **Smart Dashboard Creation**: ML-powered auto-layout and chart selection
+- **Anomaly Detection**: Automated detection of outliers and deviations
+- **Local LLM Integration**: Ollama-powered data storytelling without cloud dependency
+- **RAG Pipeline**: ChromaDB + embeddings for contextual dataset Q&A
+- **Zero-Shot Classification**: CLIP-based content categorization without labeled data
+- **Quantized Inference**: GGUF/INT8 models for CPU and edge deployment
 
+## Research References
 
-## Usage
-
-Here’s how you can start using BI4CV to create compelling data stories from your image and video datasets:
-- Detail the step-by-step process for using the system.
-- Include examples of commands or scripts to run.
+- **SAM-2** (2024): Segment Anything Model 2 for video segmentation — [Meta AI](https://github.com/facebookresearch/segment-anything-2)
+- **YOLO11** (2025): Ultralytics latest real-time object detection — [Ultralytics](https://github.com/ultralytics/ultralytics)
+- **Florence-2** (2024): Microsoft's unified vision foundation model — [Microsoft Research](https://arxiv.org/abs/2311.06783)
+- **CLIP** (2024): Contrastive Language-Image Pre-training for zero-shot retrieval — [OpenAI](https://github.com/openai/CLIP)
+- **Ollama** (2025): Local LLM inference engine — [Ollama](https://ollama.com)
+- **LLaVA** (2024): Visual Instruction Tuning — [Microsoft/University of Wisconsin](https://llava-vl.github.io)
+- **RAG** (2024): Retrieval-Augmented Generation survey — [Lewis et al.](https://arxiv.org/abs/2005.11401)
 
 ## Contributing
-
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -96,12 +126,12 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-- Email Gmail: pirahansiah
 - [LinkedIn](https://www.linkedin.com/in/pirahansiah/)
 - X: [@pirahansiah](https://x.com/pirahansiah)
 - Project Link: [https://github.com/pirahansiah/BI4CV](https://github.com/pirahansiah/BI4CV)
 
 ## Community and Professional Networks
+
 - [Google Scholar](https://scholar.google.com/citations?user=GvCEy4QAAAAJ&hl=en)
 - [LinkedIn Group over 34K members](https://www.linkedin.com/groups/10320678/)
 - [Facebook Group over 14K members](https://www.facebook.com/groups/computervisiondeeplearning)
@@ -109,18 +139,11 @@ Distributed under the MIT License. See `LICENSE` for more information.
 - [Tiziran](https://www.tiziran.com/)
 - [Website](https://pirahansiah.com/)
 
-## Social Media and Content Sharing
+## Social Media
 
 - [Reddit](https://www.reddit.com/user/pirahansiah/)
 - [Telegram](https://t.me/computer_vision_llm)
-- [Mastodon](https://mastodon.social/@pirahansiah)
-- [Instagram](https://www.instagram.com/computer_vision_deep_learning/)
-- [WhatsApp Group](https://chat.whatsapp.com/COguUhOlNprFIjjaHTRppW)
-- [TikTok](https://www.tiktok.com/@pirahansiah)
-- [Medium Blog](https://medium.com/@pirahansiah)
 - [YouTube Channel](https://www.youtube.com/@ComputerVisionDeepLearning)
-- [GPT Store - Creator Profile](https://gptstore.ai/creators/user-bXM5WI8Cx4fppw1EEywZj2ZV)
-- [Anaconda Cloud](https://anaconda.cloud/share/notebooks/b3402347-efbb-4a92-b754-fe8195b8ad63/overview)
-
+- [Medium Blog](https://medium.com/@pirahansiah)
 
 ![BI4CV](/BI4CV/BI4CV.png "BI4CV")
