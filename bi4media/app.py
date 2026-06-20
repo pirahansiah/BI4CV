@@ -1,32 +1,58 @@
-# Farshid Pirahansiah
-# Create : 2024 - May
-# update: 2024 - June
-import subprocess
-import os
-import time
+"""Orchestrator: launches all BI4CV microservices as subprocesses."""
 
-# Define the paths to your service scripts
-services = [
+from __future__ import annotations
+
+import logging
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+SERVICES: list[str] = [
     "1_main_service.py",
     "2_bi_tools.py",
-    "3_image_video_metadata_dashboard.py"
+    "3_image_video_metadata_dashboard.py",
 ]
 
-processes = []
+MICROSERVICES_DIR = Path(__file__).resolve().parent / "microservices"
 
-try:
-    for service in services:
-        script_path = os.path.join(os.path.dirname(__file__), "microservices", service)
-        process = subprocess.Popen(['python', script_path])
-        processes.append(process)
-        time.sleep(1)  # Ensure services start in order without conflicts
 
-    # Keep the script running to keep the subprocesses alive
-    while True:
+def _launch_services() -> list[subprocess.Popen[str]]:
+    """Start each microservice subprocess and return their handles."""
+    processes: list[subprocess.Popen[str]] = []
+    for service in SERVICES:
+        script = MICROSERVICES_DIR / service
+        logger.info("Starting %s", script)
+        proc = subprocess.Popen([sys.executable, str(script)])
+        processes.append(proc)
         time.sleep(1)
-except KeyboardInterrupt:
-    print("Shutting down services...")
-    for process in processes:
-        process.terminate()
-    for process in processes:
-        process.wait()
+    return processes
+
+
+def _shutdown(processes: list[subprocess.Popen[str]]) -> None:
+    """Gracefully terminate all subprocesses."""
+    logger.info("Shutting down services...")
+    for proc in processes:
+        proc.terminate()
+    for proc in processes:
+        proc.wait()
+
+
+def main() -> None:
+    """Entry point: launch microservices and keep alive until interrupted."""
+    processes = _launch_services()
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        _shutdown(processes)
+
+
+if __name__ == "__main__":
+    main()

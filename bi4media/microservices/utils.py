@@ -1,100 +1,166 @@
-import os
+"""Utility functions for folder traversal and media metadata extraction."""
+
+from __future__ import annotations
+
+import logging
+from dataclasses import dataclass, field
+from datetime import datetime
+from pathlib import Path
+from typing import Optional
+
+import numpy as np
 import pandas as pd
 from PIL import Image
-from datetime import datetime
-import numpy as np
-import logging
-from image_score import *
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+from .image_score import ImageQualityScorer
 
-def get_folder_path_from_file(file_path1):
-    try:
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.abspath(os.path.join(current_dir, file_path1))
-        print(file_path)
+logger = logging.getLogger(__name__)
 
-        with open(file_path, 'r') as file:
-            #folder_path = file.readline().strip()
-            folder_path = os.path.expanduser(os.path.normpath(os.path.join(current_dir, file.read().strip())))
-            logging.info(f'Reading folder path from {file_path}: {folder_path}')
-            return folder_path
-    except Exception as e:
-        logging.error(f"Failed to read the folder path from {file_path}: {e}")
-        raise
+IMAGE_EXTENSIONS: frozenset[str] = frozenset({".png", ".jpg", ".jpeg", ".bmp", ".gif"})
+VIDEO_EXTENSIONS: frozenset[str] = frozenset({".mp4", ".avi", ".mov", ".mkv"})
 
-def get_image_metadata(image_path):
+
+@dataclass(frozen=True, slots=True)
+class ImageMetadata:
+    filename: str
+    size: tuple[int, int]
+    mode: str
+    fmt: str
+    created_at: datetime
+    file_size: int
+    resolution: int
+    scores: dict[str, float] = field(default_factory=dict)
+
+
+@dataclass(frozen=True, slots=True)
+class VideoMetadata:
+    filename: str
+    created_at: datetime
+    file_size: int
+
+
+@dataclass(slots=True)
+class FolderInfo:
+    path: str
+    images: int = 0
+    videos: int = 0
+
+
+def get_folder_path_from_file(file_path: Path) -> Path:
+    """Read and resolve a folder path from a text config file."""
+    config_dir = file_path.resolve().parent
+    raw = file_path.read_text().strip()
+    resolved = (config_dir / raw).expanduser().resolve()
+    logger.info("Reading folder path from %s: %s", file_path, resolved)
+    return resolved
+
+
+def get_image_metadata(
+    image_path: Path, scorer: ImageQualityScorer
+) -> Optional[ImageMetadata]:
+    """Extract metadata and IQA scores from a single image."""
     try:
         with Image.open(image_path) as img:
-            img_cv = np.array(img)
-            img_cv = img_cv[:, :, ::-1].copy()
-            thumbnail = img.resize((100, 100))
-            return {
-                "filename": os.path.basename(image_path),
-                "size": img.size,
-                "mode": img.mode,
-                "format": img.format,
-                "created_at": datetime.fromtimestamp(os.path.getctime(image_path)),
-                "file_size": os.path.getsize(image_path),
-                "resolution": img.size[0] * img.size[1],
-                "thumbnail": thumbnail,
-                "calculate_mscn_coefficients": calculate_mscn_coefficients(img_cv),
-                "compute_niqe_features": compute_niqe_features(img_cv),
-                "calculate_piqe_index": calculate_piqe_index(img_cv),
-                "estimate_jpeg_quality": estimate_jpeg_quality(img_cv),
-                "compute_bliinds_features": compute_bliinds_features(img_cv),
-                "extract_cornia_features": extract_cornia_features(img_cv),
-                "calculate_sseq": calculate_sseq(img_cv),
-                "calculate_fqadi_features": calculate_fqadi_features(img_cv)
-            }
-    except Exception as e:
-        logging.error(f"Error extracting metadata and computing scores for image {image_path}: {e}")
+            img_cv = np.array(img)[:, :, ::-1].copy()
+            scores = scorer.compute_all_scores(img_cv)
+            return ImageMetadata(
+                filename=image_path.name,
+                size=img.size,
+                mode=img.mode,
+                fmt=img.format or "",
+                created_at=datetime.fromtimestamp(image_path.stat().st_ctime),
+                file_size=image_path.stat().st_size,
+                resolution=img.size[0] * img.size[1],
+                scores=scores,
+            )
+    except Exception:
+        logger.exception("Error extracting metadata for %s", image_path)
         return None
 
-def get_video_metadata(video_path):
+
+def get_video_metadata(video_path: Path) -> Optional[VideoMetadata]:
+    """Extract basic metadata from a video file."""
     try:
-        return {
-            "filename": os.path.basename(video_path),
-            "created_at": datetime.fromtimestamp(os.path.getctime(video_path)),
-            "file_size": os.path.getsize(video_path)
-        }
-    except Exception as e:
-        logging.error(f"Error extracting metadata from video {video_path}: {e}")
+        stat = video_path.stat()
+        return VideoMetadata(
+            filename=video_path.name,
+            created_at=datetime.fromtimestamp(stat.st_ctime),
+            file_size=stat.st_size,
+        )
+    except Exception:
+        logger.exception("Error extracting metadata for %s", video_path)
         return None
 
-def gather_folder_info(folder_path):
-    folder_info = {}
-    try:
-        for root, _, files in os.walk(folder_path):
-            image_count = sum(1 for file in files if file.lower().endswith(('png', 'jpg', 'jpeg', 'bmp', 'gif')))
-            video_count = sum(1 for file in files if file.lower().endswith(('mp4', 'avi', 'mov', 'mkv')))
-            folder_info[root] = {'images': image_count, 'videos': video_count}
-        return folder_info
-    except Exception as e:
-        logging.error(f"Failed to gather folder info from {folder_path}: {e}")
-        return {}
 
-def gather_metadata(folder_path):
-    metadata = []
+def gather_folder_info(folder_path: Path) -> list[FolderInfo]:
+    """Walk a directory tree and count images/videos per subfolder."""
+    info: list[FolderInfo] = []
     try:
-        for root, _, files in os.walk(folder_path):
+        for root, _, files in folder_path.walk():
+            image_count = sum(
+                1 for f in files if Path(f).suffix.lower() in IMAGE_EXTENSIONS
+            )
+            video_count = sum(
+                1 for f in files if Path(f).suffix.lower() in VIDEO_EXTENSIONS
+            )
+            info.append(
+                FolderInfo(path=str(root), images=image_count, videos=video_count)
+            )
+    except Exception:
+        logger.exception("Failed to gather folder info from %s", folder_path)
+    return info
+
+
+def gather_metadata(
+    folder_path: Path,
+    scorer: ImageQualityScorer,
+    max_per_type: int = 2,
+) -> pd.DataFrame:
+    """Collect metadata from up to `max_per_type` images and videos per folder."""
+    records: list[dict] = []
+    try:
+        for root, _, files in folder_path.walk():
             image_count = 0
             video_count = 0
-            for file in files:
-                if image_count >= 2 and video_count >= 2:
+            for fname in files:
+                fpath = root / fname
+                ext = fpath.suffix.lower()
+                if ext in IMAGE_EXTENSIONS and image_count < max_per_type:
+                    meta = get_image_metadata(fpath, scorer)
+                    if meta is not None:
+                        records.append(_image_meta_to_dict(meta))
+                        image_count += 1
+                elif ext in VIDEO_EXTENSIONS and video_count < max_per_type:
+                    meta = get_video_metadata(fpath)
+                    if meta is not None:
+                        records.append(_video_meta_to_dict(meta))
+                        video_count += 1
+                if image_count >= max_per_type and video_count >= max_per_type:
                     break
-                file_path = os.path.join(root, file)
-                if file.lower().endswith(('png', 'jpg', 'jpeg', 'bmp', 'gif')) and image_count < 2:
-                    meta = get_image_metadata(file_path)
-                    #image_count += 1
-                elif file.lower().endswith(('mp4', 'avi', 'mov', 'mkv')) and video_count < 2:
-                    meta = get_video_metadata(file_path)
-                    #video_count += 1
-                else:
-                    continue
-                if meta:
-                    metadata.append(meta)
-        return pd.DataFrame(metadata)
-    except Exception as e:
-        logging.error(f"Failed to gather metadata from {folder_path}: {e}")
-        return pd.DataFrame()
+    except Exception:
+        logger.exception("Failed to gather metadata from %s", folder_path)
+    return pd.DataFrame(records)
+
+
+def _image_meta_to_dict(meta: ImageMetadata) -> dict:
+    d: dict = {
+        "filename": meta.filename,
+        "size": meta.size,
+        "mode": meta.mode,
+        "format": meta.fmt,
+        "created_at": meta.created_at,
+        "file_size": meta.file_size,
+        "resolution": meta.resolution,
+        "type": "image",
+    }
+    d.update(meta.scores)
+    return d
+
+
+def _video_meta_to_dict(meta: VideoMetadata) -> dict:
+    return {
+        "filename": meta.filename,
+        "created_at": meta.created_at,
+        "file_size": meta.file_size,
+        "type": "video",
+    }

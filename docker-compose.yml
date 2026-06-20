@@ -1,0 +1,12 @@
+services:
+  bi4cv:
+    build: .
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+      - "5003:5003"
+    volumes:
+      - ./datasets:/app/datasets:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped

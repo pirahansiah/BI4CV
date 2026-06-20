@@ -1,152 +1,149 @@
+"""No-reference image quality assessment metrics.
+
+Implements BRISQUE (MSCN), NIQE, PIQE, JPEG-Q, BLIINDS-II, CORNIA,
+SSEQ, and FQADI feature extractors for blind image quality evaluation.
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+from typing import final
+
 import cv2
-import os
 import numpy as np
-from scipy.special import gamma
-            # BRISQUE (Blind/Referenceless Image Spatial Quality Evaluator)
-            # BRISQUE measures the naturalness of images using scene statistics without requiring a reference image. A Python implementation can be crafted by extracting Mean Subtracted Contrast Normalized (MSCN) coefficients, which are then used to train a support vector machine (SVM) to predict quality scores.
-def calculate_mscn_coefficients(image, kernel_size=7, sigma=1.166):
-    img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) / 255.0
-    blurred = cv2.GaussianBlur(img, (kernel_size, kernel_size), sigma)
-    blurred_sq = blurred * blurred
-    sigma = np.sqrt(cv2.GaussianBlur(img * img, (kernel_size, kernel_size), sigma) - blurred_sq + 1e-10)
-    mscn = (img - blurred) / sigma
-    return mscn
-            # NIQE (Natural Image Quality Evaluator)
-            # NIQE is a no-reference metric that uses a collection of statistical features based on natural scene statistics to provide a measure of perceptual image quality.
-def compute_niqe_features(image):
-    img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) / 255.0
-    mu_param = np.mean(img)
-    sigma_param = np.std(img)
-    return mu_param, sigma_param
-            # PIQE (Perception-based Image Quality Evaluator)
-            # PIQE is another no-reference image quality metric that does not require any training or learning from a human-rated database. Instead, it relies on certain statistical tests.
-def calculate_piqe_index(image):
-    img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) / 255.0
-    local_variance = cv2.Laplacian(img, cv2.CV_64F).var()
-    return local_variance
-#JPEG Quality Evaluator (JPEG-Q)
-#This method estimates the quality of JPEG images by analyzing compression artifacts. It typically involves examining the blockiness and frequency of quantization errors, which are common in JPEG compressed images.
-def estimate_jpeg_quality(image):               
-    ycrcb = cv2.cvtColor(image, cv2.COLOR_BGR2YCrCb)
-    y_channel = ycrcb[:, :, 0]                
-    dct = cv2.dct(np.float32(y_channel)/255.0)
-    zeros = np.sum(dct < 0.01)
-    quality_estimate = 100 - (zeros / np.size(dct) * 100)
-    return quality_estimate
-#BLIINDS-II (Blind Image Integrity Notator using DCT Statistics)
-#BLIINDS-II uses discrete cosine transform (DCT) coefficients to model natural scene statistics for quality prediction.
-def compute_bliinds_features(image):
-    img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    img_dct = cv2.dct(np.float32(img) / 255.0)
-    block_size = 8
-    blocks_variance = []
-    for i in range(0, img.shape[0], block_size):
-        for j in range(0, img.shape[1], block_size):
-            block = img_dct[i:i+block_size, j:j+block_size]
-            blocks_variance.append(np.var(block))
-    bliinds_score = np.mean(blocks_variance)
-    return bliinds_score
-            # CORNIA (Cornell AnoTated Images for Blind Image Quality Assessment)
-            # CORNIA is an NR-IQA method that uses unsupervised feature learning to predict image quality based on visual importance indicators derived from large-scale image datasets.
-def extract_cornia_features(image):
-    img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    keypoints, descriptors = cv2.SIFT_create().detectAndCompute(img, None)
-    return np.mean(descriptors, axis=0)
-            # SSEQ (Spatial-Spectral Entropy-Based Quality)
-            # SSEQ uses spatial and spectral entropy to measure the amount of perceived information in an image, which correlates with its visual quality.
-def calculate_sseq(image):
-    img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    hist = cv2.calcHist([img_gray], [0], None, [256], [0, 256])
-    hist_normalize = hist.ravel()/hist.sum()
-    entropy = -1 * (hist_normalize[hist_normalize>0] * np.log2(hist_normalize[hist_normalize>0])).sum()
-    img_dct = cv2.dct(np.float32(img_gray) / 255.0)
-    dct_hist = cv2.calcHist([img_dct], [0], None, [256], [0, 256])
-    dct_hist_normalize = dct_hist.ravel()/dct_hist.sum()
-    spectral_entropy = -1 * (dct_hist_normalize[dct_hist_normalize>0] * np.log2(dct_hist_normalize[dct_hist_normalize>0])).sum()
-    return entropy + spectral_entropy
-            # FQADI (Feature-based Quality Assessment for Distorted Images)
-            # FQADI utilizes machine learning techniques to analyze various image features that indicate distortions like blurring, blocking, and ringing, which are typical in compressed or poorly transmitted images.
-def calculate_fqadi_features(image):
-    img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    edges = cv2.Canny(img, 100, 200)
-    edge_density = np.sum(edges) / (img.shape[0] * img.shape[1])
-    return edge_density
-
-# Test all 
-def test_all_socre(image):   
-    flag_display=False 
-    if image is None:
-        print('file not found')
-        exit()
-    #img_dir = os.path.dirname(os.path.abspath(__file__))
-    # #image = np.random.randint(0, 256, (256, 256, 3), dtype=np.uint8)
-    # print(' \n \n \n calculate_mscn_coefficients')
-    # print(calculate_mscn_coefficients(image))
-    # print(' \n \n \n compute_niqe_features')
-    # print(compute_niqe_features(image))
-    # print(' \n \n \n calculate_piqe_index')
-    # print(calculate_piqe_index(image))
-    # print(' \n \n \n estimate_jpeg_quality')
-    # print(estimate_jpeg_quality(image))
-    # print(' \n \n \n compute_bliinds_features')
-    # print(compute_bliinds_features(image))
-    # print(' \n \n \n extract_cornia_features')
-    # print(extract_cornia_features(image))
-    # print(' \n \n \n calculate_sseq')
-    # print(calculate_sseq(image))
-    # print(' \n \n \n calculate_fqadi_features')
-    # print(calculate_fqadi_features(image))
-    
-    # one number for each
-    if flag_display:
-        print(' \n \n \n calculate_mscn_coefficients')
-        print(np.mean(calculate_mscn_coefficients(image)))
-        print(' \n \n \n compute_niqe_features')
-        print(np.mean(compute_niqe_features(image)))
-        print(' \n \n \n calculate_piqe_index')
-        print(np.mean(calculate_piqe_index(image)))
-        print(' \n \n \n estimate_jpeg_quality')
-        print(np.mean(estimate_jpeg_quality(image)))
-        print(' \n \n \n compute_bliinds_features')
-        print(np.mean(compute_bliinds_features(image)))
-        print(' \n \n \n extract_cornia_features')
-        print(np.mean(extract_cornia_features(image)))
-        print(' \n \n \n calculate_sseq')
-        print(np.mean(calculate_sseq(image)))
-        print(' \n \n \n calculate_fqadi_features')
-        print(np.mean(calculate_fqadi_features(image)))
-
-    one_score = [np.mean(calculate_mscn_coefficients(image))
-        ,np.mean(compute_niqe_features(image))
-        ,np.mean(calculate_piqe_index(image))
-        ,np.mean(estimate_jpeg_quality(image))
-        ,np.mean(compute_bliinds_features(image))
-        ,np.mean(extract_cornia_features(image))
-        ,np.mean(calculate_sseq(image))
-        ,np.mean(calculate_fqadi_features(image))]
-    #print(' \n \n \n One Score for image quality')
-    #print(np.mean(one_score))
-    return np.mean(one_score)
 
 
+@final
+class ImageQualityScorer:
+    """Aggregates multiple no-reference IQA metrics into a single score."""
 
-if __name__ == '__main__':        
-    folder_path_txt = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(folder_path_txt,'folder_path.txt'), 'r') as file:
-        folder_path = file.read().strip()
-    folder_path = os.path.join(folder_path, 'datasets')    
-    files = os.listdir(folder_path)
-    #image_files = [file for file in files if file.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff'))]    
-    for file_name in files:
-        file_path = os.path.join(folder_path, file_name)
-        try:
-            image = cv2.imread(file_path)
-            if image is not None:
-                print(file_path)
-                print(test_all_socre(image))
-            else:
-                print(f"Unable to read image: {file_name}")
-        except Exception as e:
-            print(f"Error reading file {file_name}: {e}")    
+    IMAGE_EXTENSIONS: tuple[str, ...] = (
+        ".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".tif", ".webp",
+    )
+
+    def calculate_mscn_coefficients(
+        self,
+        image: np.ndarray,
+        kernel_size: int = 7,
+        sigma: float = 1.166,
+    ) -> np.ndarray:
+        """Compute Mean Subtracted Contrast Normalized coefficients (BRISQUE)."""
+        img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) / 255.0
+        blurred = cv2.GaussianBlur(img, (kernel_size, kernel_size), sigma)
+        blurred_sq = blurred * blurred
+        sigma_map = np.sqrt(
+            cv2.GaussianBlur(img * img, (kernel_size, kernel_size), sigma)
+            - blurred_sq
+            + 1e-10
+        )
+        return (img - blurred) / sigma_map
+
+    def compute_niqe_features(self, image: np.ndarray) -> tuple[float, float]:
+        """Compute NIQE natural scene statistics (mu, sigma)."""
+        img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) / 255.0
+        return float(np.mean(img)), float(np.std(img))
+
+    def calculate_piqe_index(self, image: np.ndarray) -> float:
+        """Compute PIQE local variance index."""
+        img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) / 255.0
+        return float(cv2.Laplacian(img, cv2.CV_64F).var())
+
+    def estimate_jpeg_quality(self, image: np.ndarray) -> float:
+        """Estimate JPEG compression quality (0-100)."""
+        ycrcb = cv2.cvtColor(image, cv2.COLOR_BGR2YCrCb)
+        y_channel = ycrcb[:, :, 0]
+        dct = cv2.dct(np.float32(y_channel) / 255.0)
+        zeros = float(np.sum(dct < 0.01))
+        return 100.0 - (zeros / np.size(dct) * 100.0)
+
+    def compute_bliinds_features(self, image: np.ndarray) -> float:
+        """Compute BLIINDS-II DCT block variance score."""
+        img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        img_dct = cv2.dct(np.float32(img) / 255.0)
+        block_size = 8
+        h, w = img.shape
+        blocks_variance: list[float] = []
+        for i in range(0, h, block_size):
+            for j in range(0, w, block_size):
+                block = img_dct[i : i + block_size, j : j + block_size]
+                blocks_variance.append(float(np.var(block)))
+        return float(np.mean(blocks_variance))
+
+    def extract_cornia_features(self, image: np.ndarray) -> np.ndarray:
+        """Extract CORNIA SIFT-based visual features."""
+        img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        sift = cv2.SIFT_create()
+        _keypoints, descriptors = sift.detectAndCompute(img, None)
+        if descriptors is None:
+            return np.zeros(128, dtype=np.float64)
+        return np.mean(descriptors, axis=0)
+
+    def calculate_sseq(self, image: np.ndarray) -> float:
+        """Compute Spatial-Spectral Entropy-Based Quality score."""
+        img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        hist = cv2.calcHist([img_gray], [0], None, [256], [0, 256])
+        hist_norm = hist.ravel() / hist.sum()
+        positive = hist_norm[hist_norm > 0]
+        spatial_entropy = float(-1.0 * (positive * np.log2(positive)).sum())
+
+        img_dct = cv2.dct(np.float32(img_gray) / 255.0)
+        dct_hist = cv2.calcHist([img_dct], [0], None, [256], [0, 256])
+        dct_norm = dct_hist.ravel() / dct_hist.sum()
+        positive_dct = dct_norm[dct_norm > 0]
+        spectral_entropy = float(
+            -1.0 * (positive_dct * np.log2(positive_dct)).sum()
+        )
+        return spatial_entropy + spectral_entropy
+
+    def calculate_fqadi_features(self, image: np.ndarray) -> float:
+        """Compute FQADI edge density feature."""
+        img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        edges = cv2.Canny(img, 100, 200)
+        return float(np.sum(edges)) / float(img.shape[0] * img.shape[1])
+
+    def compute_all_scores(self, image: np.ndarray) -> dict[str, float]:
+        """Compute all IQA metrics and return as a dict."""
+        return {
+            "mscn": float(np.mean(self.calculate_mscn_coefficients(image))),
+            "niqe": float(np.mean(self.compute_niqe_features(image))),
+            "piqe": float(np.mean(self.calculate_piqe_index(image))),
+            "jpeg_quality": float(np.mean(self.estimate_jpeg_quality(image))),
+            "bliinds": float(np.mean(self.compute_bliinds_features(image))),
+            "cornia": float(np.mean(self.extract_cornia_features(image))),
+            "sseq": float(np.mean(self.calculate_sseq(image))),
+            "fqadi": float(np.mean(self.calculate_fqadi_features(image))),
+        }
+
+    def compute_aggregate_score(self, image: np.ndarray) -> float:
+        """Return a single aggregate IQA score (mean of all metrics)."""
+        scores = self.compute_all_scores(image)
+        return float(np.mean(list(scores.values())))
+
+    def score_folder(self, folder_path: Path) -> dict[str, float]:
+        """Score all images in a folder, keyed by filename."""
+        results: dict[str, float] = {}
+        for file_path in folder_path.iterdir():
+            if file_path.suffix.lower() in self.IMAGE_EXTENSIONS:
+                image = cv2.imread(str(file_path))
+                if image is not None:
+                    results[str(file_path)] = self.compute_aggregate_score(image)
+        return results
 
 
+scorer = ImageQualityScorer()
+
+
+if __name__ == "__main__":
+    config_dir = Path(__file__).resolve().parent
+    folder_path_file = config_dir / "folder_path.txt"
+    if folder_path_file.exists():
+        raw = folder_path_file.read_text().strip()
+        data_dir = (config_dir / raw / "datasets").resolve()
+        if data_dir.is_dir():
+            for file_path in data_dir.iterdir():
+                image = cv2.imread(str(file_path))
+                if image is not None:
+                    print(f"{file_path}: {scorer.compute_aggregate_score(image):.4f}")
+                else:
+                    print(f"Unable to read image: {file_path.name}")

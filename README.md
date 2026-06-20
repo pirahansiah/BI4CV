@@ -146,4 +146,34 @@ Distributed under the MIT License. See `LICENSE` for more information.
 - [YouTube Channel](https://www.youtube.com/@ComputerVisionDeepLearning)
 - [Medium Blog](https://medium.com/@pirahansiah)
 
+## 12-Month Roadmap
+
+### Q1 (Months 1–3): Foundation & Core Platform
+- [ ] Migrate Flask microservices to FastAPI with async endpoints
+- [ ] Implement YOLO11/YOLOv9 real-time object detection pipeline
+- [ ] Add CLIP-based semantic search for zero-shot image retrieval
+- [ ] Set up PostgreSQL metadata store replacing CSV exports
+- [ ] Achieve 90%+ test coverage with pytest
+
+### Q2 (Months 4–6): LLM Integration & RAG
+- [ ] Integrate Ollama for local LLM inference (Llama 3.2, Phi-3)
+- [ ] Build RAG pipeline: ChromaDB + embeddings for dataset Q&A
+- [ ] Add Florence-2 / LLaVA multimodal captioning
+- [ ] Implement SAM-2 video segmentation for interactive labeling
+- [ ] Create REST/gRPC API gateway for external integrations
+
+### Q3 (Months 7–9): Edge & Performance
+- [ ] ONNX Runtime inference engine for CPU/edge deployment
+- [ ] INT8/INT4 quantization via GGUF for Raspberry Pi / Intel NUC
+- [ ] CUDA 13 kernels for NVIDIA Spark batch processing
+- [ ] Apple Neural Engine optimization for M5 Max
+- [ ] Benchmark suite: latency, throughput, memory across hardware targets
+
+### Q4 (Months 10–12): Production & Scale
+- [ ] Kubernetes Helm chart for multi-node deployment
+- [ ] Real-time WebSocket dashboards replacing Dash polling
+- [ ] Anomaly detection with temporal heatmaps and alerting
+- [ ] SOC 2 / GDPR compliance layer for media data handling
+- [ ] Multi-tenant SaaS billing integration (Stripe)
+
 ![BI4CV](/BI4CV/BI4CV.png "BI4CV")
